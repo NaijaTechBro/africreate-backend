@@ -43,3 +43,14 @@
 20250411	00:34:40	4e01fc44-d789-4f43-9cfe-b2d4a3cbe522	POST	/api/auth/register	undefined
 20250411	00:39:37	61d6062b-23d2-479c-8948-7602f33a6971	POST	/api/auth/register	undefined
 20250411	00:40:24	ec9ed1f6-7aff-439c-a84e-12df90c51e40	POST	/api/auth/login	undefined
+20250411	08:23:58	7605fc11-6e60-4abc-ad78-ad74e4d4cbf4	GET	/api/trending	http://localhost:5173
+20250411	08:24:00	c920fa30-03a3-44bb-b441-67e91ec484dd	GET	/api/trending	http://localhost:5173
+20250411	08:26:20	0517218a-c1de-414a-9af5-a84bea6e98ed	OPTIONS	/api/auth/login	http://localhost:5173
+20250411	08:26:21	98718a49-0e49-4e00-a397-f615e51ecedb	POST	/api/auth/login	http://localhost:5173
+20250411	08:26:23	a4960b0b-238a-40a9-8cf1-44139d245a38	POST	/api/auth/login	http://localhost:5173
+20250411	08:26:27	ecdeb082-4c79-4dda-8e66-0cbfc85ed227	OPTIONS	/api/auth/login	http://localhost:5173
+20250411	08:26:27	f97775d8-c244-4213-ba7b-ba6f26fb3389	POST	/api/auth/login	http://localhost:5173
+20250411	08:26:28	45d90238-73c2-4bcb-b651-44d03605ea71	POST	/api/auth/login	http://localhost:5173
+20250411	08:26:32	7acfdd54-b5a5-42b1-baeb-f1353fb9deeb	OPTIONS	/api/auth/login	http://localhost:5173
+20250411	08:26:33	e6d4c900-fd70-4942-a7ce-59ee570f44ce	POST	/api/auth/login	http://localhost:5173
+20250411	08:26:33	27548ddd-f526-4a2f-8a10-a781da04e61b	POST	/api/auth/login	http://localhost:5173

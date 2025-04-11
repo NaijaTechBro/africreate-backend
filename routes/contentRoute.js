@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const contentController = require('../controllers/contentController');
-const { isAuthenticatedUser } = require('../middleware/authmiddleware');
+const { isAuthenticatedUser } = require('../middleware/authMiddleware');
 
 // Get single content by ID (optional auth for checking subscriptions)
 router.get('/:contentId', contentController.getContent);

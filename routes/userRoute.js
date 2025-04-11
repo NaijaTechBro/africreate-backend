@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const { isAuthenticatedUser } = require('../middleware/authmiddleware');
+const { isAuthenticatedUser } = require('../middleware/authMiddleware');
 
 // Get user profile by username
 router.get('/:username', userController.getProfile);

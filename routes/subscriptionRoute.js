@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const subscriptionController = require('../controllers/subscriptionController');
-const { isAuthenticatedUser } = require('../middleware/authmiddleware');
+const { isAuthenticatedUser } = require('../middleware/authMiddleware');
 
 // Get user's subscriptions (protected route)
 router.get('/user', isAuthenticatedUser, subscriptionController.getUserSubscriptions);
