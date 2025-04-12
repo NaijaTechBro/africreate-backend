@@ -2,6 +2,25 @@ const mongoose = require('mongoose');
 const Profile = require('../models/profileModel');
 const asyncHandler = require('express-async-handler');
 
+
+
+// Get the current user's profile
+const getMyProfile = asyncHandler(async (req, res) => {
+    try {
+        // This assumes that req.user is set by your authentication middleware
+        // and contains the current user's ID
+        const profile = await Profile.findOne({ userId: req.user._id });
+        
+        if (!profile) {
+            return res.status(404).json({ message: "Profile not found" });
+        }
+        
+        res.status(200).json(profile);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Get all profiles
 const getProfiles = async (req, res) => { 
     try {
@@ -107,6 +126,7 @@ module.exports = {
     getProfiles,
     getProfile,
     createProfile,
+    getMyProfile,
     getProfilesByUser,
     getProfilesBySearch,
     updateProfile,

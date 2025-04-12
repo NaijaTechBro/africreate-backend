@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router()
 
 
-const { getProfiles, createProfile, updateProfile, deleteProfile, getProfile, getProfilesByUser } = require("../controllers/profileController")
+const { getProfiles, getMyProfile, createProfile, updateProfile, deleteProfile, getProfile, getProfilesByUser } = require("../controllers/profileController")
 const { 
     updateProfilePicture, 
     deleteProfilePicture, 
@@ -11,7 +11,7 @@ const {
   const { isAuthenticatedUser } = require("../middleware/authMiddleware");
 
 
-router.get('/me', getProfile)
+router.get('/me', isAuthenticatedUser, getMyProfile)
 router.get('/profile/getprofiles', getProfiles)
 router.get('/profile/getprofilebyuser/', getProfilesByUser)
 router.post('/profile/create', createProfile)

@@ -63,31 +63,26 @@ const register = asyncHandler(async (req, res) => {
     sameSite: "none",
     secure: true,
   });
+// Send welcome mail
+const subject = "Welcome to Redox Trading";
+const send_to = user.email;
+const sent_from = "Redox Trading <info@redox.com.ng>";
+const reply_to = "info@redox.com.ng"
+const template = "welcome";
+const fullname = user.name;
 
-  //send welcome mail
-  const subject = "Welcome to Nestlypay";
-  const send_to = email;
-  const sent_from = "Nestlypay <hello@nestlypay.com>";
-  const reply_to = "no-reply@nestlypay.com";
-  const fullname = user.name;
-  const template = "welcome";
-
-  try {
-    await sendEmail(
-      subject,
-      send_to,
-      sent_from,
-      reply_to,
-      template,
-      fullname,
-    );
-    res
-      .status(200)
-      .json({ success: true, message: "Welcome Email Sent" });
-  } catch (error) {
-    res.status(500);
-    throw new Error("Email not sent, please try again");
-  }
+try {
+  await sendEmail(
+    subject,
+    send_to,
+    sent_from,
+    reply_to,
+    template,
+    fullname,
+  );
+} catch (error) {
+  console.log("Welcome email failed to send, but user was created successfully");
+}
 
 	if (user) {
 		const { _id, name, email, photo, phone, isVerified, username, isCreator } = user

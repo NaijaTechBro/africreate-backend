@@ -10,7 +10,7 @@ router.get('/:contentId', contentController.getContent);
 router.get('/trending', contentController.getTrendingContent);
 
 // Get content by creator (protected route)
-router.get('/creator', isAuthenticatedUser, contentController.getCreatorContent);
+router.get('/creator/me', isAuthenticatedUser, contentController.getCreatorContent);
 
 // Get content categories
 router.get('/categories', contentController.getCategories);

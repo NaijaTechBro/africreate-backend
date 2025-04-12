@@ -1,3 +1,5 @@
 20250410	10:58:51	8b971705-0621-407a-b248-9e0f4304e978	undefined: ECONNREFUSED	querySrv	_mongodb._tcp.cluster0.2muryjl.mongodb.net
 20250410	11:03:38	43fdddc1-4dab-40c8-bba8-ffa316fbcd87	undefined: undefined	undefined	undefined
 20250411	00:36:54	cf26904e-21c7-4fee-95c0-690b09f5afc2	undefined: undefined	undefined	undefined
+20250412	14:34:43	f6fb1e9f-26c6-420b-8c9f-02b9c22fa180	undefined: undefined	undefined	undefined
+20250412	16:32:39	bcf941c5-21c6-4c10-b055-43d3ab6be2e4	undefined: ESERVFAIL	querySrv	_mongodb._tcp.cluster0.rncklmm.mongodb.net
