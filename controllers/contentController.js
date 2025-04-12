@@ -4,6 +4,231 @@ const Subscription = require('../models/subscriptionModel');
 
 // Controller methods for content-related operations
 const contentController = {
+  // Create new content
+  createContent: async (req, res) => {
+    try {
+      const userId = req.user._id;
+      
+      // Check if user exists and is a creator
+      const user = await User.findById(userId);
+      if (!user || !user.isCreator) {
+        return res.status(403).json({ 
+          success: false, 
+          message: 'Only creators can publish content' 
+        });
+      }
+      
+      const { 
+        title, 
+        description, 
+        contentType, 
+        mediaUrl, 
+        thumbnailUrl, 
+        tags, 
+        isExclusive, 
+        requiredTier, 
+        isPaidContent, 
+        price, 
+        currency,
+        status,
+        scheduleDate
+      } = req.body;
+      
+      // Validate required fields
+      if (!title || !contentType) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Title and content type are required' 
+        });
+      }
+      
+      // Additional validation based on content type
+      if (['image', 'video', 'audio'].includes(contentType) && !mediaUrl) {
+        return res.status(400).json({ 
+          success: false, 
+          message: `Media URL is required for ${contentType} content` 
+        });
+      }
+      
+      // Create new content
+      const newContent = new Content({
+        creator: userId,
+        title,
+        description,
+        contentType,
+        mediaUrl,
+        thumbnailUrl,
+        tags: tags?.length ? tags : [],
+        isExclusive: isExclusive || false,
+        requiredTier: requiredTier || null,
+        isPaidContent: isPaidContent || false,
+        price: price || 0,
+        currency: currency || 'USD',
+        status: status || 'published',
+        scheduleDate: scheduleDate || null
+      });
+      
+      await newContent.save();
+      
+      // Populate creator info for response
+      const populatedContent = await Content.findById(newContent._id)
+        .populate('creator', 'username profilePicture');
+      
+      return res.status(201).json({
+        success: true,
+        message: 'Content created successfully',
+        content: populatedContent
+      });
+    } catch (error) {
+      console.error('Error creating content:', error);
+      return res.status(500).json({ success: false, message: 'Server error' });
+    }
+  },
+
+  // Update content
+  updateContent: async (req, res) => {
+    try {
+      const contentId = req.params.contentId;
+      const userId = req.user._id;
+      
+      // Find content
+      const content = await Content.findById(contentId);
+      
+      if (!content) {
+        return res.status(404).json({ success: false, message: 'Content not found' });
+      }
+      
+      // Check if user is the creator
+      if (content.creator.toString() !== userId.toString()) {
+        return res.status(403).json({ 
+          success: false, 
+          message: 'You can only update your own content' 
+        });
+      }
+      
+      // Update fields if provided
+      const updateFields = [
+        'title', 'description', 'mediaUrl', 'thumbnailUrl', 
+        'tags', 'isExclusive', 'requiredTier', 'isPaidContent', 
+        'price', 'currency', 'status', 'scheduleDate'
+      ];
+      
+      updateFields.forEach(field => {
+        if (req.body[field] !== undefined) {
+          content[field] = req.body[field];
+        }
+      });
+      
+      // Save updated content
+      await content.save();
+      
+      // Populate creator info for response
+      const populatedContent = await Content.findById(contentId)
+        .populate('creator', 'username profilePicture');
+      
+      return res.status(200).json({
+        success: true,
+        message: 'Content updated successfully',
+        content: populatedContent
+      });
+    } catch (error) {
+      console.error('Error updating content:', error);
+      return res.status(500).json({ success: false, message: 'Server error' });
+    }
+  },
+
+  // Delete content
+  deleteContent: async (req, res) => {
+    try {
+      const contentId = req.params.contentId;
+      const userId = req.user._id;
+      
+      // Find content
+      const content = await Content.findById(contentId);
+      
+      if (!content) {
+        return res.status(404).json({ success: false, message: 'Content not found' });
+      }
+      
+      // Check if user is the creator
+      if (content.creator.toString() !== userId.toString()) {
+        return res.status(403).json({ 
+          success: false, 
+          message: 'You can only delete your own content' 
+        });
+      }
+      
+      // Delete content
+      await Content.findByIdAndDelete(contentId);
+      
+      return res.status(200).json({
+        success: true,
+        message: 'Content deleted successfully'
+      });
+    } catch (error) {
+      console.error('Error deleting content:', error);
+      return res.status(500).json({ success: false, message: 'Server error' });
+    }
+  },
+
+  // Get popular creators
+  getPopularCreators: async (req, res) => {
+    try {
+      // Find creators with most followers or most content views
+      const popularCreators = await User.aggregate([
+        // Match only users who are creators
+        { $match: { isCreator: true } },
+        
+        // Add followers count field
+        { $addFields: { 
+          followersCount: { $size: { $ifNull: ["$followers", []] } } 
+        }},
+        
+        // Optional: Lookup content for each creator to count views
+        { $lookup: {
+          from: 'contents',
+          localField: '_id',
+          foreignField: 'creator',
+          as: 'contents'
+        }},
+        
+        // Add total views field
+        { $addFields: {
+          totalViews: { $sum: "$contents.views" }
+        }},
+        
+        // Project only needed fields
+        { $project: {
+          _id: 1,
+          name: 1,
+          username: 1,
+          profilePicture: 1,
+          bio: 1,
+          followersCount: 1,
+          totalViews: 1,
+          contentCount: { $size: "$contents" }
+        }},
+        
+        // Sort by combination of followers and views
+        { $sort: { 
+          followersCount: -1, 
+          totalViews: -1 
+        }},
+        
+        // Limit to top 10 creators
+        { $limit: 10 }
+      ]);
+      
+      return res.status(200).json({
+        success: true,
+        creators: popularCreators
+      });
+    } catch (error) {
+      console.error('Error getting popular creators:', error);
+      return res.status(500).json({ success: false, message: 'Server error' });
+    }
+  },
+
   // Get single content by ID
   getContent: async (req, res) => {
     try {
