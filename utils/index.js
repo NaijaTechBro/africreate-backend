@@ -8,7 +8,7 @@ const encoding = "hex";
 
 // Generate Token
 const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.SECRET, { expiresIn: "1d" });
+    return jwt.sign({ id }, process.env.MY_SECRET, { expiresIn: "1d" });
 };
 
 // Hash Token
