@@ -145,3 +145,12 @@
 20250411	16:35:12	345ed78e-9a63-44b5-a4a3-e043283959a1	POST	/api/auth/login	undefined
 20250411	16:35:32	a72f2dd3-5ca3-43fd-b054-dc4f959c7547	POST	/api/auth/forgotPassword	undefined
 20250411	16:36:43	fc96f10a-d9ac-4df2-bbd4-602c42f6f994	POST	/api/auth/forgotPassword	undefined
+20250412	12:33:36	25e747bc-81c9-40e4-b492-b72c45e91fee	OPTIONS	/api/auth/register	http://localhost:5173
+20250412	12:33:36	a09f1958-59bc-4f5c-8252-310201c3906b	POST	/api/auth/register	http://localhost:5173
+20250412	12:34:30	b372e247-9f10-4e3e-a27d-be1abf5a520f	GET	/api/auth/register	undefined
+20250412	12:41:30	00b0f2ef-54f2-49fb-b271-25f53865a52b	OPTIONS	/api/auth/register	http://localhost:5173
+20250412	12:41:30	0a78a31b-ce29-417f-857c-8932bce66d2b	POST	/api/auth/register	http://localhost:5173
+20250412	12:43:15	4fa0c690-c944-4e3e-b499-e8ac4d3c6b4a	OPTIONS	/api/auth/register	http://localhost:5173
+20250412	12:43:15	1fd1cc57-65ee-41a6-bd84-4d2607b4f723	POST	/api/auth/register	http://localhost:5173
+20250412	12:44:35	51c6e4e4-8b69-469f-ba11-03e546fa80c2	OPTIONS	/api/auth/register	http://localhost:5173
+20250412	12:44:35	0e81b743-d75b-43ed-9ebe-db34a80d89a3	POST	/api/auth/register	http://localhost:5173

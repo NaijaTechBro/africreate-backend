@@ -6,7 +6,6 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const whitelist = require('./config/whiteList')
-const xss = require('xss-clean');
 
 const app = express();
 const path = require('path');
@@ -20,6 +19,7 @@ const cookieParser = require("cookie-parser");
 const connectDB = require('./config/dbConn');
 
 const errorHandlerr = require("./middleware/errorMiddleware");
+const expressSanitizer = require('express-sanitizer');
 
 // Connecting to Database Environments
 console.log(process.env.NODE_ENV)
@@ -36,6 +36,11 @@ app.use(errorHandler)
 app.use(errorHandlerr)
 
 app.use(express.json({ limit: "30mb", extended: true}))
+
+app.use(cookieParser())
+app.use(express.urlencoded({ limit: "30mb", extended: false}))
+app.use(bodyParser.json())
+
 app.use(
     helmet.contentSecurityPolicy({
         useDefaults: true,
@@ -44,15 +49,10 @@ app.use(
         },
     }),
 )
-app.use(xss());
-app.use(cookieParser())
-app.use(express.urlencoded({ limit: "30mb", extended: false}))
-app.use(bodyParser.json())
-
+app.use(expressSanitizer());
 
 
 // Routes
-
 app.use('/', express.static(path.join(__dirname, 'public')))
 app.use('/', require('./routes/root'))
 app.use("/api", require("./routes/authRoutes"));
