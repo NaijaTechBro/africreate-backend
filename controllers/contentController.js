@@ -230,65 +230,74 @@ const contentController = {
   },
 
   // Get single content by ID
-  getContent: async (req, res) => {
-    try {
-      const contentId = req.params.contentId;
-      const content = await Content.findById(contentId)
-        .populate('creator', 'username profilePicture')
-        .populate({
-          path: 'comments',
-          populate: {
-            path: 'user',
-            select: 'username profilePicture'
-          }
-        });
+getContent: async (req, res) => {
+  try {
+    const contentId = req.params.contentId;
+    
+    // Validate if contentId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(contentId)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid content ID format' 
+      });
+    }
+    
+    const content = await Content.findById(contentId)
+      .populate('creator', 'username profilePicture')
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'user',
+          select: 'username profilePicture'
+        }
+      });
 
-      if (!content) {
-        return res.status(404).json({ success: false, message: 'Content not found' });
+    if (!content) {
+      return res.status(404).json({ success: false, message: 'Content not found' });
+    }
+
+    // Check if content is exclusive and user has subscription
+    if (content.isExclusive) {
+      // If no user is logged in
+      if (!req.user) {
+        return res.status(403).json({ 
+          success: false, 
+          message: 'This content requires a subscription' 
+        });
       }
 
-      // Check if content is exclusive and user has subscription
-      if (content.isExclusive) {
-        // If no user is logged in
-        if (!req.user) {
+      // Check if user is the creator
+      if (content.creator._id.toString() !== req.user._id.toString()) {
+        // Check if user has active subscription
+        const hasSubscription = await Subscription.findOne({
+          subscriber: req.user._id,
+          creator: content.creator._id,
+          isActive: true,
+          ...(content.requiredTier && { tier: content.requiredTier })
+        });
+
+        if (!hasSubscription) {
           return res.status(403).json({ 
             success: false, 
             message: 'This content requires a subscription' 
           });
         }
-
-        // Check if user is the creator
-        if (content.creator._id.toString() !== req.user._id.toString()) {
-          // Check if user has active subscription
-          const hasSubscription = await Subscription.findOne({
-            subscriber: req.user._id,
-            creator: content.creator._id,
-            isActive: true,
-            ...(content.requiredTier && { tier: content.requiredTier })
-          });
-
-          if (!hasSubscription) {
-            return res.status(403).json({ 
-              success: false, 
-              message: 'This content requires a subscription' 
-            });
-          }
-        }
       }
-
-      // Increment view count
-      content.views += 1;
-      await content.save();
-
-      return res.status(200).json({
-        success: true,
-        content
-      });
-    } catch (error) {
-      console.error('Error getting content:', error);
-      return res.status(500).json({ success: false, message: 'Server error' });
     }
-  },
+
+    // Increment view count
+    content.views += 1;
+    await content.save();
+
+    return res.status(200).json({
+      success: true,
+      content
+    });
+  } catch (error) {
+    console.error('Error getting content:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+},
 
   // Get trending content
   getTrendingContent: async (req, res) => {
