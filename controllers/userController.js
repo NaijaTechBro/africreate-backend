@@ -1,98 +1,109 @@
-const User = require('../models/userModel');
-const Content = require('../models/contentModel');
-const Subscription = require('../models/subscriptionModel');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const asyncHandler = require("express-async-handler");
+const User = require("../models/userModel");
 
-// Controller methods for user-related operations
-const userController = {
-  // Get user profile
-  getProfile: async (req, res) => {
-    try {
-      const username = req.params.username;
-      const user = await User.findOne({ username })
-        .select('-password -userAgent')
-        .populate('followers', 'username profilePicture')
-        .populate('following', 'username profilePicture');
-
-      if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' });
-      }
-
-      // Get content count
-      const contentCount = await Content.countDocuments({ creator: user._id });
-      const userWithContentCount = { ...user._doc, contentCount };
-
-      return res.status(200).json({
-        success: true,
-        user: userWithContentCount
-      });
-    } catch (error) {
-      console.error('Error getting user profile:', error);
-      return res.status(500).json({ success: false, message: 'Server error' });
+// Get current user data
+const getUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+    
+    if (user) {
+        const { _id, name, email, photo, phone, isVerified, role, vToken } = user;
+        res.status(200).json({
+            _id,
+            name,
+            email,
+            photo,
+            phone,
+            isVerified,
+            role,
+            vToken,
+        });
+    } else {
+        res.status(400);
+        throw new Error("User Not Found");
     }
-  },
+});
 
-  // Get popular creators
-  getPopularCreators: async (req, res) => {
-    try {
-      const creators = await User.find({ isCreator: true })
-        .sort({ 'followers.length': -1 })
-        .limit(10)
-        .select('username profilePicture bio followers');
-      
-      return res.status(200).json({
-        success: true,
-        creators
-      });
-    } catch (error) {
-      console.error('Error getting popular creators:', error);
-      return res.status(500).json({ success: false, message: 'Server error' });
+// Update user details
+const updateUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+    
+    if (user) {
+        const { name, email, photo, phone, role, isVerified } = user;
+        user.email = email;
+        user.name = req.body.name || name;
+        user.phone = req.body.phone || phone;
+        user.photo = req.body.photo || photo;
+        
+        const updatedUser = await user.save();
+        res.status(200).json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            photo: updatedUser.photo,
+            phone: updatedUser.phone,
+            role,
+            isVerified,
+        });
+    } else {
+        res.status(404);
+        throw new Error("User not found");
     }
-  },
+});
 
-  // Get creator stats
-  getCreatorStats: async (req, res) => {
-    try {
-      if (!req.user.isCreator) {
-        return res.status(403).json({ success: false, message: 'Not authorized as creator' });
-      }
-
-      const creatorId = req.user._id;
-      
-      // Get subscriber count
-      const subscriberCount = await Subscription.countDocuments({ 
-        creator: creatorId,
-        isActive: true
-      });
-      
-      // Get content count
-      const contentCount = await Content.countDocuments({ creator: creatorId });
-      
-      // Calculate total revenue
-      const subscriptions = await Subscription.find({ creator: creatorId });
-      const totalRevenue = subscriptions.reduce((total, sub) => total + sub.price, 0);
-      
-      // Calculate total views
-      const contents = await Content.find({ creator: creatorId });
-      const totalViews = contents.reduce((total, content) => total + content.views, 0);
-
-      const stats = {
-        totalSubscribers: subscriberCount,
-        totalContent: contentCount,
-        totalRevenue: totalRevenue,
-        totalViews: totalViews
-      };
-
-      return res.status(200).json({
-        success: true,
-        stats
-      });
-    } catch (error) {
-      console.error('Error getting creator stats:', error);
-      return res.status(500).json({ success: false, message: 'Server error' });
+// Get all users - admin function
+const getUsers = asyncHandler(async (req, res) => {
+    const users = await User.find().sort("-createdAt").select("-password");
+    if (!users) {
+        res.status(500);
+        throw new Error("Something went wrong");
     }
-  }
+    res.status(200).json(users);
+});
+
+// Delete a user - admin function
+const deleteUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+    // if user doesnt exist
+    if (!user) {
+        res.status(404);
+        throw new Error("User not found");
+    }
+    
+    await user.remove();
+    res.status(200).json({ message: "User deleted successfully" });
+});
+
+// Upgrade user role - admin function
+const upgradeUser = asyncHandler(async (req, res) => {
+    const { role, id } = req.body;
+    
+    // Get the user
+    const user = await User.findById(id);
+    
+    if (!user) {
+        res.status(404);
+        throw new Error("User not found");
+    }
+    
+    user.role = role;
+    await user.save();
+    
+    res.status(200).json(`User role updated to ${role}`);
+});
+
+// Special function to delete all records - admin only and should be protected
+const deleteAll = asyncHandler(async (req, res) => {
+    // await Token.deleteMany({});
+    res.send("Encrypt");
+    // const crypted = encrypt(content);
+    // const decrypted = decrypt(crypted);
+});
+
+module.exports = {
+    getUser,
+    updateUser,
+    getUsers,
+    upgradeUser,
+    deleteUser,
+    deleteAll,
 };
-
-module.exports = userController;
