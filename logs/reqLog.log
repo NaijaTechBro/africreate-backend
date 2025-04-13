@@ -624,3 +624,9 @@
 20250412	21:30:56	8fb58acb-68e6-4d3f-b088-243b223d5a71	OPTIONS	/api/content/creator	http://localhost:5173
 20250412	21:30:56	d58976ee-d299-4f77-b403-6563b858ad00	GET	/api/content/creator	http://localhost:5173
 20250412	21:30:56	1e0d02f2-613f-48d9-a600-0ddb6f7e5a03	GET	/api/content/creator	http://localhost:5173
+20250413	09:09:00	65ea7297-a284-4cfe-80e8-7a0dc3266bf2	GET	/api/trending	http://localhost:5173
+20250413	09:09:01	6c26cd6c-7fbf-4be2-89eb-143ad098f148	GET	/api/trending	http://localhost:5173
+20250413	09:09:03	593aebfd-46a6-4913-8313-ba357348a9c6	GET	/api/popular-creators	http://localhost:5173
+20250413	09:09:03	23434977-e43e-4339-af04-b478cbc98be3	GET	/api/popular-creators	http://localhost:5173
+20250413	09:09:04	f0c9a115-a63d-4b74-a15d-607e47e23a5c	GET	/api/categories	http://localhost:5173
+20250413	09:09:04	99f04580-abba-468b-bc60-1e9f71271f1c	GET	/api/categories	http://localhost:5173
