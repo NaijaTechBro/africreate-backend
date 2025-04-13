@@ -1,4 +1,3 @@
-
 const Content = require('../models/contentModel');
 const User = require('../models/userModel');
 const Subscription = require('../models/subscriptionModel');
