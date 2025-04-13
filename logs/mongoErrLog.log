@@ -4,3 +4,5 @@
 20250412	14:34:43	f6fb1e9f-26c6-420b-8c9f-02b9c22fa180	undefined: undefined	undefined	undefined
 20250412	16:32:39	bcf941c5-21c6-4c10-b055-43d3ab6be2e4	undefined: ESERVFAIL	querySrv	_mongodb._tcp.cluster0.rncklmm.mongodb.net
 20250412	20:40:52	d33f900d-faa8-47c7-a1b3-a25e9c9e92a1	undefined: ECONNREFUSED	querySrv	_mongodb._tcp.cluster0.rncklmm.mongodb.net
+20250412	21:08:15	73c1b5da-c4eb-4e8a-80a8-5df6815406d0	undefined: ECONNREFUSED	querySrv	_mongodb._tcp.cluster0.rncklmm.mongodb.net
+20250412	21:21:34	957f9b05-d48c-4fd0-8f54-ee55c4ae62b2	undefined: ECONNREFUSED	querySrv	_mongodb._tcp.cluster0.rncklmm.mongodb.net
